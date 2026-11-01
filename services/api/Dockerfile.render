@@ -1,0 +1,16 @@
+FROM maven:3.9-eclipse-temurin-21 AS build
+WORKDIR /src
+COPY pom.xml .
+RUN mvn -B dependency:go-offline
+COPY src src
+RUN mvn -B package -DskipTests
+
+FROM eclipse-temurin:21-jre-alpine
+RUN addgroup -S sentinela && adduser -S sentinela -G sentinela
+WORKDIR /app
+COPY --from=build --chown=sentinela:sentinela /src/target/sentinela-api-1.0.0.jar app.jar
+COPY --chown=sentinela:sentinela start-render.sh /app/start-render.sh
+RUN chmod 500 /app/start-render.sh
+USER sentinela
+EXPOSE 8080
+ENTRYPOINT ["/bin/sh", "/app/start-render.sh"]

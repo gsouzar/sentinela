@@ -1,0 +1,45 @@
+# Demonstracao: API Free dorme por inatividade e Postgres Free expira em 30 dias.
+# Para monitoramento continuo, escolha instancias pagas no painel apos revisar custos.
+services:
+  - type: web
+    name: sentinela-api
+    runtime: docker
+    region: virginia
+    plan: free
+    dockerfilePath: ./services/api/Dockerfile.render
+    dockerContext: ./services/api
+    healthCheckPath: /api/v1/health
+    envVars:
+      - key: PORT
+        value: "8080"
+      - key: DATABASE_HOST
+        fromDatabase: {name: sentinela-db, property: host}
+      - key: DATABASE_PORT
+        value: "5432"
+      - key: DATABASE_NAME
+        fromDatabase: {name: sentinela-db, property: database}
+      - key: DATABASE_USER
+        fromDatabase: {name: sentinela-db, property: user}
+      - key: DATABASE_PASSWORD
+        fromDatabase: {name: sentinela-db, property: password}
+      - key: ENCRYPTION_KEY
+        generateValue: true
+      - key: WEB_ORIGIN
+        sync: false
+      - key: SECURE_COOKIES
+        value: "true"
+      - key: DEMO_MODE
+        value: "false"
+      - key: REQUIRE_MFA
+        value: "false"
+      - key: SPRING_DATASOURCE_HIKARI_MAXIMUM_POOL_SIZE
+        value: "5"
+      - key: SPRING_DATASOURCE_HIKARI_MINIMUM_IDLE
+        value: "1"
+databases:
+  - name: sentinela-db
+    region: virginia
+    plan: free
+    databaseName: sentinela
+    user: sentinela
+    ipAllowList: []

@@ -1,0 +1,4 @@
+flask>=3.1,<4
+flask-limiter>=3.12,<5
+pyngrok>=7.2,<8
+requests>=2.32,<3

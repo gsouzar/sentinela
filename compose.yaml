@@ -1,0 +1,50 @@
+services:
+  db:
+    image: postgres:17-alpine
+    environment:
+      POSTGRES_DB: sentinela
+      POSTGRES_USER: sentinela
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Defina POSTGRES_PASSWORD}
+    volumes: [postgres-data:/var/lib/postgresql/data]
+    healthcheck:
+      test: [CMD-SHELL, pg_isready -U sentinela -d sentinela]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+    restart: unless-stopped
+  api:
+    build: ./services/api
+    environment:
+      DATABASE_URL: jdbc:postgresql://db:5432/sentinela
+      DATABASE_USER: sentinela
+      DATABASE_PASSWORD: ${POSTGRES_PASSWORD}
+      ENCRYPTION_KEY: ${ENCRYPTION_KEY:?Defina ENCRYPTION_KEY}
+      DEMO_MODE: ${DEMO_MODE:-false}
+      SECURE_COOKIES: ${SECURE_COOKIES:-false}
+      WEB_ORIGIN: ${WEB_ORIGIN:-http://localhost:3000}
+      GOOGLE_SAFE_BROWSING_KEY: ${GOOGLE_SAFE_BROWSING_KEY:-}
+      URLHAUS_KEY: ${URLHAUS_KEY:-}
+      COLAB_CHAT_URL: ${COLAB_CHAT_URL:-}
+      COLAB_CHAT_KEY: ${COLAB_CHAT_KEY:-}
+      TELEGRAM_API_KEY: ${TELEGRAM_API_KEY:-}
+      REQUIRE_MFA: ${REQUIRE_MFA:-false}
+      ADMIN_EMAIL: ${ADMIN_EMAIL:-}
+      ADMIN_PASSWORD: ${ADMIN_PASSWORD:-}
+    depends_on:
+      db: {condition: service_healthy}
+    read_only: true
+    tmpfs: [/tmp]
+    security_opt: [no-new-privileges:true]
+    cap_drop: [ALL]
+    restart: unless-stopped
+  web:
+    build: ./apps/web
+    environment:
+      API_INTERNAL_URL: http://api:8080
+    ports: [127.0.0.1:3000:3000]
+    depends_on: [api]
+    security_opt: [no-new-privileges:true]
+    cap_drop: [ALL]
+    restart: unless-stopped
+volumes:
+  postgres-data:

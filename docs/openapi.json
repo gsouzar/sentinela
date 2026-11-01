@@ -1,0 +1,2675 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "Sentinela API",
+    "version": "1.0.0",
+    "description": "Web: cookie HttpOnly e header X-XSRF-TOKEN obtido de /csrf para mutações. Android: Bearer opaco e X-Sentinela-Client: android nos endpoints de autenticação. Payload máximo 16 KB. Score não é probabilidade. Contas humanas precisam configurar TOTP por padrão (428 até matrícula). Integração Telegram usa chave de máquina separada; nunca sessão humana. Monitoramento: sites confirmados por TXT, amostras externas e relatos tipados opcionais. USER pode optar por2FA; ADMIN exige MFA."
+  },
+  "servers": [
+    {
+      "url": "http://localhost:3000/api/v1"
+    },
+    {
+      "url": "http://localhost:8080/api/v1"
+    }
+  ],
+  "security": [
+    {
+      "cookieSession": []
+    },
+    {
+      "bearerSession": []
+    }
+  ],
+  "paths": {
+    "/health": {
+      "get": {
+        "summary": "Saúde mínima do serviço",
+        "responses": {
+          "200": {
+            "description": "Operação concluída"
+          },
+          "400": {
+            "description": "Entrada inválida",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Sessão/credencial de login inválida",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Permissão, CSRF ou confirmação de credencial recusada",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Objeto não encontrado",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Limite de tentativas",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "security": []
+      }
+    },
+    "/csrf": {
+      "get": {
+        "summary": "Obter token CSRF web",
+        "responses": {
+          "200": {
+            "description": "Operação concluída"
+          },
+          "400": {
+            "description": "Entrada inválida",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Sessão/credencial de login inválida",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Permissão, CSRF ou confirmação de credencial recusada",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Objeto não encontrado",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Limite de tentativas",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "security": []
+      }
+    },
+    "/auth/register": {
+      "post": {
+        "summary": "Cadastro USER; web recebe cookie e Android recebe access/refresh",
+        "responses": {
+          "201": {
+            "description": "Operação concluída"
+          },
+          "400": {
+            "description": "Entrada inválida",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Sessão/credencial de login inválida",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Permissão, CSRF ou confirmação de credencial recusada",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Objeto não encontrado",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Limite de tentativas",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "security": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Register"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/auth/login": {
+      "post": {
+        "summary": "Login; pode solicitar MFA com 428",
+        "responses": {
+          "200": {
+            "description": "Operação concluída"
+          },
+          "400": {
+            "description": "Entrada inválida",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Sessão/credencial de login inválida",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Permissão, CSRF ou confirmação de credencial recusada",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Objeto não encontrado",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Limite de tentativas",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "security": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Login"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/auth/refresh": {
+      "post": {
+        "summary": "Rotação Android; requer X-Sentinela-Client: android",
+        "responses": {
+          "200": {
+            "description": "Operação concluída"
+          },
+          "400": {
+            "description": "Entrada inválida",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Sessão/credencial de login inválida",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Permissão, CSRF ou confirmação de credencial recusada",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Objeto não encontrado",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Limite de tentativas",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "security": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "refreshToken"
+                ],
+                "properties": {
+                  "refreshToken": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/auth/logout": {
+      "post": {
+        "summary": "Revogar a sessão corrente",
+        "responses": {
+          "200": {
+            "description": "Operação concluída"
+          },
+          "400": {
+            "description": "Entrada inválida",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Sessão/credencial de login inválida",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Permissão, CSRF ou confirmação de credencial recusada",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Objeto não encontrado",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Limite de tentativas",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/me": {
+      "get": {
+        "summary": "Consultar a própria conta",
+        "responses": {
+          "200": {
+            "description": "Operação concluída"
+          },
+          "400": {
+            "description": "Entrada inválida",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Sessão/credencial de login inválida",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Permissão, CSRF ou confirmação de credencial recusada",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Objeto não encontrado",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Limite de tentativas",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/me/sessions": {
+      "get": {
+        "summary": "Listar as próprias sessões",
+        "responses": {
+          "200": {
+            "description": "Operação concluída"
+          },
+          "400": {
+            "description": "Entrada inválida",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Sessão/credencial de login inválida",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Permissão, CSRF ou confirmação de credencial recusada",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Objeto não encontrado",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Limite de tentativas",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/me/sessions/revoke-all": {
+      "post": {
+        "summary": "Revogar todos os acessos da conta",
+        "responses": {
+          "200": {
+            "description": "Operação concluída"
+          },
+          "400": {
+            "description": "Entrada inválida",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Sessão/credencial de login inválida",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Permissão, CSRF ou confirmação de credencial recusada",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Objeto não encontrado",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Limite de tentativas",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/me/password": {
+      "post": {
+        "summary": "Alterar senha e revogar sessões",
+        "responses": {
+          "200": {
+            "description": "Operação concluída"
+          },
+          "400": {
+            "description": "Entrada inválida",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Sessão/credencial de login inválida",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Permissão, CSRF ou confirmação de credencial recusada",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Objeto não encontrado",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Limite de tentativas",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ChangePassword"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/me/mfa/setup": {
+      "post": {
+        "summary": "Segundo fator: setup",
+        "responses": {
+          "200": {
+            "description": "Operação concluída"
+          },
+          "400": {
+            "description": "Entrada inválida",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Sessão/credencial de login inválida",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Permissão, CSRF ou confirmação de credencial recusada",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Objeto não encontrado",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Limite de tentativas",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Proof"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/me/mfa/enable": {
+      "post": {
+        "summary": "Segundo fator: enable",
+        "responses": {
+          "200": {
+            "description": "Operação concluída"
+          },
+          "400": {
+            "description": "Entrada inválida",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Sessão/credencial de login inválida",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Permissão, CSRF ou confirmação de credencial recusada",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Objeto não encontrado",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Limite de tentativas",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Proof"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/me/mfa/disable": {
+      "post": {
+        "summary": "Segundo fator: disable",
+        "responses": {
+          "200": {
+            "description": "Operação concluída"
+          },
+          "400": {
+            "description": "Entrada inválida",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Sessão/credencial de login inválida",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Permissão, CSRF ou confirmação de credencial recusada",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Objeto não encontrado",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Limite de tentativas",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Proof"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/analyses": {
+      "post": {
+        "summary": "Avaliar e persistir URL sem navegar até o destino",
+        "responses": {
+          "201": {
+            "description": "Operação concluída",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Analysis"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Entrada inválida",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Sessão/credencial de login inválida",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Permissão, CSRF ou confirmação de credencial recusada",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Objeto não encontrado",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Limite de tentativas",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AnalysisInput"
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "summary": "Histórico autorizado; ADMIN vê todas as contas",
+        "responses": {
+          "200": {
+            "description": "Operação concluída"
+          },
+          "400": {
+            "description": "Entrada inválida",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Sessão/credencial de login inválida",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Permissão, CSRF ou confirmação de credencial recusada",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Objeto não encontrado",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Limite de tentativas",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "risk",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "LOW",
+                "MEDIUM",
+                "HIGH"
+              ]
+            }
+          },
+          {
+            "name": "q",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "maxLength": 100
+            }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 10000,
+              "default": 0
+            }
+          },
+          {
+            "name": "size",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 100,
+              "default": 15
+            }
+          },
+          {
+            "name": "days",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 3650,
+              "default": 30
+            }
+          }
+        ]
+      }
+    },
+    "/analyses/{id}": {
+      "get": {
+        "summary": "Detalhes autorizados",
+        "responses": {
+          "200": {
+            "description": "Operação concluída"
+          },
+          "400": {
+            "description": "Entrada inválida",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Sessão/credencial de login inválida",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Permissão, CSRF ou confirmação de credencial recusada",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Objeto não encontrado",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Limite de tentativas",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ]
+      },
+      "delete": {
+        "summary": "Excluir análise própria e conversas vinculadas",
+        "responses": {
+          "200": {
+            "description": "Operação concluída"
+          },
+          "400": {
+            "description": "Entrada inválida",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Sessão/credencial de login inválida",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Permissão, CSRF ou confirmação de credencial recusada",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Objeto não encontrado",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Limite de tentativas",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ]
+      }
+    },
+    "/me/sessions/{id}": {
+      "delete": {
+        "summary": "Revogar sessão própria",
+        "responses": {
+          "200": {
+            "description": "Operação concluída"
+          },
+          "400": {
+            "description": "Entrada inválida",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Sessão/credencial de login inválida",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Permissão, CSRF ou confirmação de credencial recusada",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Objeto não encontrado",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Limite de tentativas",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ]
+      }
+    },
+    "/dashboard": {
+      "get": {
+        "summary": "Totais e distribuição diária UTC",
+        "responses": {
+          "200": {
+            "description": "Operação concluída"
+          },
+          "400": {
+            "description": "Entrada inválida",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Sessão/credencial de login inválida",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Permissão, CSRF ou confirmação de credencial recusada",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Objeto não encontrado",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Limite de tentativas",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "days",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 365,
+              "default": 7
+            }
+          }
+        ]
+      }
+    },
+    "/chat": {
+      "get": {
+        "summary": "Últimas 50 interações da própria conta",
+        "responses": {
+          "200": {
+            "description": "Operação concluída"
+          },
+          "400": {
+            "description": "Entrada inválida",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Sessão/credencial de login inválida",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Permissão, CSRF ou confirmação de credencial recusada",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Objeto não encontrado",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Limite de tentativas",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Explicar análise autorizada ou orientar sobre segurança",
+        "responses": {
+          "200": {
+            "description": "Operação concluída"
+          },
+          "400": {
+            "description": "Entrada inválida",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Sessão/credencial de login inválida",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Permissão, CSRF ou confirmação de credencial recusada",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Objeto não encontrado",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Limite de tentativas",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ChatInput"
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "summary": "Excluir histórico de conversas da própria conta",
+        "responses": {
+          "200": {
+            "description": "Operação concluída"
+          },
+          "400": {
+            "description": "Entrada inválida",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Sessão/credencial de login inválida",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Permissão, CSRF ou confirmação de credencial recusada",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Objeto não encontrado",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Limite de tentativas",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/admin/users": {
+      "get": {
+        "summary": "ADMIN: até 200 contas recentes",
+        "responses": {
+          "200": {
+            "description": "Operação concluída"
+          },
+          "400": {
+            "description": "Entrada inválida",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Sessão/credencial de login inválida",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Permissão, CSRF ou confirmação de credencial recusada",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Objeto não encontrado",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Limite de tentativas",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/admin/users/{id}": {
+      "patch": {
+        "summary": "ADMIN: ativar/desativar conta comum",
+        "responses": {
+          "200": {
+            "description": "Operação concluída"
+          },
+          "400": {
+            "description": "Entrada inválida",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Sessão/credencial de login inválida",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Permissão, CSRF ou confirmação de credencial recusada",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Objeto não encontrado",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Limite de tentativas",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "enabled"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                  "enabled": {
+                    "type": "boolean"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ]
+      }
+    },
+    "/admin/audit": {
+      "get": {
+        "summary": "ADMIN: eventos de auditoria",
+        "responses": {
+          "200": {
+            "description": "Operação concluída"
+          },
+          "400": {
+            "description": "Entrada inválida",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Sessão/credencial de login inválida",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Permissão, CSRF ou confirmação de credencial recusada",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Objeto não encontrado",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Limite de tentativas",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 10000,
+              "default": 0
+            }
+          }
+        ]
+      }
+    },
+    "/api/v1/integrations/telegram/analyze": {
+      "post": {
+        "summary": "Analisar link de conversa privada autorizada",
+        "security": [
+          {
+            "TelegramKey": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "chatId",
+                  "userId"
+                ],
+                "properties": {
+                  "chatId": {
+                    "type": "string",
+                    "pattern": "^[1-9][0-9]{0,19}$"
+                  },
+                  "userId": {
+                    "type": "string"
+                  },
+                  "url": {
+                    "type": "string",
+                    "maxLength": 2048
+                  },
+                  "message": {
+                    "type": "string",
+                    "maxLength": 1500
+                  },
+                  "analysisId": {
+                    "type": "string",
+                    "maxLength": 36
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Resposta limitada à identidade técnica da conversa"
+          },
+          "401": {
+            "description": "Chave ausente ou incorreta"
+          },
+          "403": {
+            "description": "Conversa/identidade recusada"
+          },
+          "429": {
+            "description": "Limite excedido"
+          },
+          "503": {
+            "description": "Integração desativada"
+          }
+        }
+      }
+    },
+    "/api/v1/integrations/telegram/chat": {
+      "post": {
+        "summary": "Explicar análise da mesma conversa",
+        "security": [
+          {
+            "TelegramKey": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "chatId",
+                  "userId"
+                ],
+                "properties": {
+                  "chatId": {
+                    "type": "string",
+                    "pattern": "^[1-9][0-9]{0,19}$"
+                  },
+                  "userId": {
+                    "type": "string"
+                  },
+                  "url": {
+                    "type": "string",
+                    "maxLength": 2048
+                  },
+                  "message": {
+                    "type": "string",
+                    "maxLength": 1500
+                  },
+                  "analysisId": {
+                    "type": "string",
+                    "maxLength": 36
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Resposta limitada à identidade técnica da conversa"
+          },
+          "401": {
+            "description": "Chave ausente ou incorreta"
+          },
+          "403": {
+            "description": "Conversa/identidade recusada"
+          },
+          "429": {
+            "description": "Limite excedido"
+          },
+          "503": {
+            "description": "Integração desativada"
+          }
+        }
+      }
+    },
+    "/api/v1/integrations/telegram/erase": {
+      "post": {
+        "summary": "Excluir análises e chat da identidade Telegram",
+        "security": [
+          {
+            "TelegramKey": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "chatId",
+                  "userId"
+                ],
+                "properties": {
+                  "chatId": {
+                    "type": "string",
+                    "pattern": "^[1-9][0-9]{0,19}$"
+                  },
+                  "userId": {
+                    "type": "string"
+                  },
+                  "url": {
+                    "type": "string",
+                    "maxLength": 2048
+                  },
+                  "message": {
+                    "type": "string",
+                    "maxLength": 1500
+                  },
+                  "analysisId": {
+                    "type": "string",
+                    "maxLength": 36
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Resposta limitada à identidade técnica da conversa"
+          },
+          "401": {
+            "description": "Chave ausente ou incorreta"
+          },
+          "403": {
+            "description": "Conversa/identidade recusada"
+          },
+          "429": {
+            "description": "Limite excedido"
+          },
+          "503": {
+            "description": "Integração desativada"
+          }
+        }
+      }
+    },
+    "/api/v1/sites": {
+      "get": {
+        "summary": "sites",
+        "description": "Contrato e exemplos completos em docs/MONITORAMENTO.md. Dados e privilégios são validados pelo servidor.",
+        "responses": {
+          "200": {
+            "description": "Resposta autenticada; POST /sites cria com201"
+          },
+          "400": {
+            "description": "Entrada inválida"
+          },
+          "401": {
+            "description": "Sem credencial válida"
+          },
+          "403": {
+            "description": "Acesso negado"
+          },
+          "404": {
+            "description": "Recurso não encontrado"
+          },
+          "409": {
+            "description": "Domínio pendente, alteração ou fila pendente"
+          },
+          "429": {
+            "description": "Limite excedido"
+          }
+        }
+      },
+      "post": {
+        "summary": "sites",
+        "description": "Contrato e exemplos completos em docs/MONITORAMENTO.md. Dados e privilégios são validados pelo servidor.",
+        "responses": {
+          "200": {
+            "description": "Resposta autenticada; POST /sites cria com201"
+          },
+          "400": {
+            "description": "Entrada inválida"
+          },
+          "401": {
+            "description": "Sem credencial válida"
+          },
+          "403": {
+            "description": "Acesso negado"
+          },
+          "404": {
+            "description": "Recurso não encontrado"
+          },
+          "409": {
+            "description": "Domínio pendente, alteração ou fila pendente"
+          },
+          "429": {
+            "description": "Limite excedido"
+          }
+        }
+      }
+    },
+    "/api/v1/sites/{id}": {
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "format": "uuid"
+          }
+        }
+      ],
+      "patch": {
+        "summary": "sites/{id}",
+        "description": "Contrato e exemplos completos em docs/MONITORAMENTO.md. Dados e privilégios são validados pelo servidor.",
+        "responses": {
+          "200": {
+            "description": "Resposta autenticada; POST /sites cria com201"
+          },
+          "400": {
+            "description": "Entrada inválida"
+          },
+          "401": {
+            "description": "Sem credencial válida"
+          },
+          "403": {
+            "description": "Acesso negado"
+          },
+          "404": {
+            "description": "Recurso não encontrado"
+          },
+          "409": {
+            "description": "Domínio pendente, alteração ou fila pendente"
+          },
+          "429": {
+            "description": "Limite excedido"
+          }
+        }
+      }
+    },
+    "/api/v1/sites/{id}/status": {
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "format": "uuid"
+          }
+        }
+      ],
+      "patch": {
+        "summary": "sites/{id}/status",
+        "description": "Contrato e exemplos completos em docs/MONITORAMENTO.md. Dados e privilégios são validados pelo servidor.",
+        "responses": {
+          "200": {
+            "description": "Resposta autenticada; POST /sites cria com201"
+          },
+          "400": {
+            "description": "Entrada inválida"
+          },
+          "401": {
+            "description": "Sem credencial válida"
+          },
+          "403": {
+            "description": "Acesso negado"
+          },
+          "404": {
+            "description": "Recurso não encontrado"
+          },
+          "409": {
+            "description": "Domínio pendente, alteração ou fila pendente"
+          },
+          "429": {
+            "description": "Limite excedido"
+          }
+        }
+      }
+    },
+    "/api/v1/sites/{id}/verify": {
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "format": "uuid"
+          }
+        }
+      ],
+      "post": {
+        "summary": "sites/{id}/verify",
+        "description": "Contrato e exemplos completos em docs/MONITORAMENTO.md. Dados e privilégios são validados pelo servidor.",
+        "responses": {
+          "200": {
+            "description": "Resposta autenticada; POST /sites cria com201"
+          },
+          "400": {
+            "description": "Entrada inválida"
+          },
+          "401": {
+            "description": "Sem credencial válida"
+          },
+          "403": {
+            "description": "Acesso negado"
+          },
+          "404": {
+            "description": "Recurso não encontrado"
+          },
+          "409": {
+            "description": "Domínio pendente, alteração ou fila pendente"
+          },
+          "429": {
+            "description": "Limite excedido"
+          }
+        }
+      }
+    },
+    "/api/v1/sites/{id}/check": {
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "format": "uuid"
+          }
+        }
+      ],
+      "post": {
+        "summary": "sites/{id}/check",
+        "description": "Contrato e exemplos completos em docs/MONITORAMENTO.md. Dados e privilégios são validados pelo servidor.",
+        "responses": {
+          "200": {
+            "description": "Resposta autenticada; POST /sites cria com201"
+          },
+          "400": {
+            "description": "Entrada inválida"
+          },
+          "401": {
+            "description": "Sem credencial válida"
+          },
+          "403": {
+            "description": "Acesso negado"
+          },
+          "404": {
+            "description": "Recurso não encontrado"
+          },
+          "409": {
+            "description": "Domínio pendente, alteração ou fila pendente"
+          },
+          "429": {
+            "description": "Limite excedido"
+          }
+        }
+      }
+    },
+    "/api/v1/sites/{id}/dashboard": {
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "format": "uuid"
+          }
+        }
+      ],
+      "get": {
+        "summary": "sites/{id}/dashboard",
+        "description": "Contrato e exemplos completos em docs/MONITORAMENTO.md. Dados e privilégios são validados pelo servidor.",
+        "responses": {
+          "200": {
+            "description": "Resposta autenticada; POST /sites cria com201"
+          },
+          "400": {
+            "description": "Entrada inválida"
+          },
+          "401": {
+            "description": "Sem credencial válida"
+          },
+          "403": {
+            "description": "Acesso negado"
+          },
+          "404": {
+            "description": "Recurso não encontrado"
+          },
+          "409": {
+            "description": "Domínio pendente, alteração ou fila pendente"
+          },
+          "429": {
+            "description": "Limite excedido"
+          }
+        }
+      }
+    },
+    "/api/v1/sites/{id}/assistant": {
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "format": "uuid"
+          }
+        }
+      ],
+      "post": {
+        "summary": "sites/{id}/assistant",
+        "description": "Contrato e exemplos completos em docs/MONITORAMENTO.md. Dados e privilégios são validados pelo servidor.",
+        "responses": {
+          "200": {
+            "description": "Resposta autenticada; POST /sites cria com201"
+          },
+          "400": {
+            "description": "Entrada inválida"
+          },
+          "401": {
+            "description": "Sem credencial válida"
+          },
+          "403": {
+            "description": "Acesso negado"
+          },
+          "404": {
+            "description": "Recurso não encontrado"
+          },
+          "409": {
+            "description": "Domínio pendente, alteração ou fila pendente"
+          },
+          "429": {
+            "description": "Limite excedido"
+          }
+        }
+      }
+    },
+    "/api/v1/sites/{id}/integration-key": {
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "format": "uuid"
+          }
+        }
+      ],
+      "post": {
+        "summary": "sites/{id}/integration-key",
+        "description": "Contrato e exemplos completos em docs/MONITORAMENTO.md. Dados e privilégios são validados pelo servidor.",
+        "responses": {
+          "200": {
+            "description": "Resposta autenticada; POST /sites cria com201"
+          },
+          "400": {
+            "description": "Entrada inválida"
+          },
+          "401": {
+            "description": "Sem credencial válida"
+          },
+          "403": {
+            "description": "Acesso negado"
+          },
+          "404": {
+            "description": "Recurso não encontrado"
+          },
+          "409": {
+            "description": "Domínio pendente, alteração ou fila pendente"
+          },
+          "429": {
+            "description": "Limite excedido"
+          }
+        }
+      }
+    },
+    "/api/v1/ingest/events": {
+      "post": {
+        "summary": "ingest/events",
+        "description": "Contrato e exemplos completos em docs/MONITORAMENTO.md. Dados e privilégios são validados pelo servidor.",
+        "responses": {
+          "200": {
+            "description": "Resposta autenticada; POST /sites cria com201"
+          },
+          "400": {
+            "description": "Entrada inválida"
+          },
+          "401": {
+            "description": "Sem credencial válida"
+          },
+          "403": {
+            "description": "Acesso negado"
+          },
+          "404": {
+            "description": "Recurso não encontrado"
+          },
+          "409": {
+            "description": "Domínio pendente, alteração ou fila pendente"
+          },
+          "429": {
+            "description": "Limite excedido"
+          }
+        },
+        "security": [
+          {
+            "SiteKey": []
+          }
+        ]
+      }
+    },
+    "/api/v1/admin/sites": {
+      "get": {
+        "summary": "admin/sites",
+        "description": "Contrato e exemplos completos em docs/MONITORAMENTO.md. Dados e privilégios são validados pelo servidor.",
+        "responses": {
+          "200": {
+            "description": "Resposta autenticada; POST /sites cria com201"
+          },
+          "400": {
+            "description": "Entrada inválida"
+          },
+          "401": {
+            "description": "Sem credencial válida"
+          },
+          "403": {
+            "description": "Acesso negado"
+          },
+          "404": {
+            "description": "Recurso não encontrado"
+          },
+          "409": {
+            "description": "Domínio pendente, alteração ou fila pendente"
+          },
+          "429": {
+            "description": "Limite excedido"
+          }
+        }
+      }
+    },
+    "/api/v1/admin/subscriptions": {
+      "get": {
+        "summary": "admin/subscriptions",
+        "description": "Contrato e exemplos completos em docs/MONITORAMENTO.md. Dados e privilégios são validados pelo servidor.",
+        "responses": {
+          "200": {
+            "description": "Resposta autenticada; POST /sites cria com201"
+          },
+          "400": {
+            "description": "Entrada inválida"
+          },
+          "401": {
+            "description": "Sem credencial válida"
+          },
+          "403": {
+            "description": "Acesso negado"
+          },
+          "404": {
+            "description": "Recurso não encontrado"
+          },
+          "409": {
+            "description": "Domínio pendente, alteração ou fila pendente"
+          },
+          "429": {
+            "description": "Limite excedido"
+          }
+        }
+      }
+    },
+    "/api/v1/admin/subscriptions/{id}": {
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "format": "uuid"
+          }
+        }
+      ],
+      "patch": {
+        "summary": "admin/subscriptions/{id}",
+        "description": "Contrato e exemplos completos em docs/MONITORAMENTO.md. Dados e privilégios são validados pelo servidor.",
+        "responses": {
+          "200": {
+            "description": "Resposta autenticada; POST /sites cria com201"
+          },
+          "400": {
+            "description": "Entrada inválida"
+          },
+          "401": {
+            "description": "Sem credencial válida"
+          },
+          "403": {
+            "description": "Acesso negado"
+          },
+          "404": {
+            "description": "Recurso não encontrado"
+          },
+          "409": {
+            "description": "Domínio pendente, alteração ou fila pendente"
+          },
+          "429": {
+            "description": "Limite excedido"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "cookieSession": {
+        "type": "apiKey",
+        "in": "cookie",
+        "name": "SENTINELA_SESSION"
+      },
+      "bearerSession": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "Opaque"
+      },
+      "TelegramKey": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "X-Sentinela-Telegram-Key"
+      },
+      "SiteKey": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "X-Sentinela-Site-Key"
+      }
+    },
+    "schemas": {
+      "Register": {
+        "type": "object",
+        "required": [
+          "name",
+          "email",
+          "password"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 80
+          },
+          "email": {
+            "type": "string",
+            "format": "email",
+            "maxLength": 254
+          },
+          "password": {
+            "type": "string",
+            "minLength": 12,
+            "maxLength": 128,
+            "writeOnly": true
+          }
+        }
+      },
+      "Login": {
+        "type": "object",
+        "required": [
+          "email",
+          "password"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "email": {
+            "type": "string",
+            "format": "email"
+          },
+          "password": {
+            "type": "string",
+            "maxLength": 128,
+            "writeOnly": true
+          },
+          "code": {
+            "type": "string",
+            "maxLength": 40,
+            "writeOnly": true
+          }
+        }
+      },
+      "Proof": {
+        "type": "object",
+        "required": [
+          "password"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "password": {
+            "type": "string",
+            "maxLength": 128,
+            "writeOnly": true
+          },
+          "code": {
+            "type": "string",
+            "maxLength": 40,
+            "writeOnly": true
+          }
+        }
+      },
+      "AnalysisInput": {
+        "type": "object",
+        "required": [
+          "url"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "url": {
+            "type": "string",
+            "format": "uri",
+            "maxLength": 2048
+          }
+        }
+      },
+      "ChatInput": {
+        "type": "object",
+        "required": [
+          "message"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "message": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 1500
+          },
+          "analysisId": {
+            "type": "string",
+            "maxLength": 36
+          }
+        }
+      },
+      "Analysis": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "url": {
+            "type": "string"
+          },
+          "domain": {
+            "type": "string"
+          },
+          "score": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 100
+          },
+          "risk": {
+            "type": "string",
+            "enum": [
+              "LOW",
+              "MEDIUM",
+              "HIGH"
+            ]
+          },
+          "coverage": {
+            "type": "string",
+            "enum": [
+              "PARTIAL",
+              "COMPLETE"
+            ]
+          },
+          "rulesVersion": {
+            "type": "string"
+          },
+          "indicators": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string"
+                },
+                "title": {
+                  "type": "string"
+                },
+                "explanation": {
+                  "type": "string"
+                },
+                "weight": {
+                  "type": "integer"
+                }
+              }
+            }
+          },
+          "sources": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string"
+                },
+                "status": {
+                  "type": "string",
+                  "enum": [
+                    "FOUND",
+                    "NOT_FOUND",
+                    "NOT_CONFIGURED",
+                    "UNAVAILABLE"
+                  ]
+                },
+                "detail": {
+                  "type": "string"
+                },
+                "checkedAt": {
+                  "type": "string",
+                  "format": "date-time"
+                }
+              }
+            }
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "notice": {
+            "type": "string"
+          }
+        }
+      },
+      "Error": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string"
+          }
+        }
+      },
+      "ChangePassword": {
+        "type": "object",
+        "required": [
+          "password",
+          "newPassword"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "password": {
+            "type": "string",
+            "maxLength": 128,
+            "writeOnly": true
+          },
+          "newPassword": {
+            "type": "string",
+            "minLength": 12,
+            "maxLength": 128,
+            "writeOnly": true
+          },
+          "code": {
+            "type": "string",
+            "maxLength": 40,
+            "writeOnly": true
+          }
+        }
+      }
+    }
+  }
+}
