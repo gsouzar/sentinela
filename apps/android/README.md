@@ -5,7 +5,7 @@ Abra esta pasta pelo botão **Open** do Android Studio: nela estão `settings.gr
 1. Instale Android SDK 35 e aceite o Gradle Sync; use JDK 17/21 compatível com AGP 8.9.3.
 2. Inicie a API Java do projeto completo no computador, na porta 8080.
 3. Crie um emulador API 35 e execute o módulo `app` pelo botão Run. O debug padrão acessa `http://10.0.2.2:8080/api/v1`.
-4. Cadastre/entre na conta e ative 2FA em Sua segurança antes de analisar links.
+4. Cadastre/entre na conta; USER pode ativar 2FA em Sua segurança. ADMIN exige o fator; REQUIRE_MFA=true o exige de todos.
 
 Para aparelho USB, execute `adb reverse tcp:8080 tcp:8080` e gere com `gradlew.bat assembleDebug -PapiBase=http://127.0.0.1:8080/api/v1`. Instale o APK em `app/build/outputs/apk/debug`. O APK padrão do pacote usa IP do emulador.
 

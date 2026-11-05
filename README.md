@@ -1,6 +1,8 @@
 # Sentinela
 
-**Publicação:** [GitHub + Vercel + API Java/PostgreSQL no Render](docs/PUBLICAR-GITHUB-VERCEL.md). O modelo gratuito é para demonstração, com limites de disponibilidade e retenção.
+**Continuidade e contexto para outra IA:** comece em [docs/CONTEXTO-COMPLETO.md](docs/CONTEXTO-COMPLETO.md), consulte [estado atual](docs/ESTADO-ATUAL.md), [manual operacional completo](docs/OPERACAO-COMPLETA.md) e [mapa técnico](docs/MAPA-TECNICO.md). Migração e validação têm relatórios próprios; planos antigos não comprovam o estado atual.
+
+**Publicação:** [GitHub + Vercel + API Java no Render (modelo de implantação)](docs/PUBLICAR-GITHUB-VERCEL.md). O modelo gratuito é para demonstração, com limites de disponibilidade e retenção. A instalação atual usa PostgreSQL no Neon após a migração; confira docs/ESTADO-ATUAL.md.
 
 **2FA por QR code no site:** ADMIN e usuário podem cadastrar o Google Authenticator em Minha segurança. [Passo a passo](docs/QR-CODE-2FA.md).
 
@@ -85,4 +87,4 @@ Consulte `docs/ARQUITETURA.md`, `docs/SEGURANCA.md`, `docs/ROTEIRO-TCC.md`, `doc
 
 A equipe dos documentos tem quatro frentes: backend/API/banco, motor/cybersecurity, mobile e web/chatbot. A atividade identifica Gustavo de Souza Rodrigues, Gabriel Herrera, Gustavo Pereira e João Eduardo Melnic. Não foi inventada uma atribuição individual além dos documentos.
 
-Limites: não há monitoramento de sites de clientes, recuperação de senha por email, detecção geográfica de login ou bloqueio universal da navegação. Não há garantia de nota ou segurança absoluta. O relatório distingue execução real, exemplo sintético e integração dependente de credenciais.
+Limites: há monitoramento por amostragem de domínios confirmados e eventos opcionais do cliente; não há recuperação de senha por email, detecção geográfica de login ou bloqueio universal da navegação. Não há garantia de nota ou segurança absoluta. O relatório distingue execução real, exemplo sintético e integração dependente de credenciais.

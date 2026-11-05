@@ -9,7 +9,7 @@ Atualização: consulte [revisão de segurança, 2FA obrigatório e Telegram](RE
 | SQL injection | JDBC parametrizado e validação de filtros |
 | Acesso cruzado e escalada | Proprietário ou ADMIN no servidor; cadastro sempre USER |
 | XSS | React/TextView escapam texto, sem execução de HTML; CSP |
-| SSRF | Sem navegação ao destino; endpoints externos fixos e sem redirects |
+| SSRF | Análise pontual não navega; monitor requer prova DNS, IPv4 público fixado ao socket e HEAD sem redirects; fontes usam endpoints fixos |
 | Senhas vazadas no banco | Argon2id |
 | CSRF web | Token Spring, cookie e renovação por mutação |
 | Tokens vazados no banco | Hash SHA-256 de tokens aleatórios de 256 bits |
@@ -27,6 +27,6 @@ O rate limiter usa getRemoteAddr(), sem confiar em X-Forwarded-For arbitrário. 
 
 O usuário pode excluir análises e conversas; excluir uma análise remove conversas vinculadas. Auditoria não é editável pelas APIs comuns. Não há expurgo automático completo. A instituição deve definir retenção e backups; scripts/manutencao.sql exemplifica limpeza de tokens/buckets expirados e não roda automaticamente. Guarde a chave MFA separadamente do backup e teste restauração.
 
-Não há varredura de conteúdo, DNS, certificado, idade ou redirecionamento do site, nem recuperação de senha por email, alertas por email ou detecção geográfica de acesso. Regras lexicais têm falsos positivos e negativos. Saída JSON e IDs válidos não garantem veracidade de toda frase da IA. O resultado determinístico permanece separado da complementação Colab.
+A análise pontual não visita o destino. O monitor separado confirma TXT e verifica HEAD/TLS/cabeçalhos; não varre conteúdo, idade, portas ou destinos de redirects. Não há recuperação de senha por email, alertas por email ou detecção geográfica de acesso. Regras lexicais têm falsos positivos e negativos. Saída JSON e IDs válidos não garantem veracidade de toda frase da IA. O resultado determinístico permanece separado da complementação Colab.
 
 Os controles não constituem certificação, conformidade LGPD ou garantia de ausência de vulnerabilidades. Consulte VERIFICACAO.md para evidências e limites de execução.

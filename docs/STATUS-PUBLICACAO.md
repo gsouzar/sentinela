@@ -1,5 +1,7 @@
 # Sentinela publicado — 01/11/2026
 
+> **Registro histórico. A migração Render → Neon foi concluída em 04/11/2026. Para infraestrutura atual, dados preservados e testes do corte, leia [ESTADO-ATUAL.md](ESTADO-ATUAL.md). As descrições de PostgreSQL Render abaixo se referem à instalação anterior.**
+
 - Site: https://sentinela-woad.vercel.app
 - API Java: https://sentinela-api-doxm.onrender.com
 - Código: https://github.com/gsouzar/sentinela
@@ -42,3 +44,4 @@ Nenhum serviço pago foi contratado. No Free, a API pode dormir após inatividad
 Os recursos desta instalação foram criados diretamente, sem aplicar Blueprint. O render.yaml é um modelo para novas instalações. Não o aplique à instalação atual sem reconciliar os recursos e os nomes internos de banco/usuário gerados pelo Render.
 
 Referência dos limites Free: https://render.com/docs/free
+
